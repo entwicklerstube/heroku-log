@@ -70,4 +70,4 @@ export const warn = (...args) => stdout('warn', log(args, { level: 'warn' }))
 export const trace = (...args) => stdout('trace', log(args, { level: 'trace' }))
 export const fatal = (...args) => stdout('error', log(args, { level: 'fatal' }))
 
-export default { debug, error, warn, trace, fatal }
+export default { info, debug, error, warn, trace, fatal }
