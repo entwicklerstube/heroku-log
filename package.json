@@ -1,0 +1,48 @@
+{
+  "name": "heroku-log",
+  "version": "1.0.0",
+  "main": "build/index.js",
+  "description": "console.log wrapper for heroku-like logs",
+  "repository": "git@github.com:entwicklerstube/heroku-log.git",
+  "author": "michaelzoidl <github@michaelzoidl.com>",
+  "keywords": [
+    "heroku",
+    "log",
+    "logging"
+  ],
+  "license": "MIT",
+  "scripts": {
+    "build": "rimraf build && mkdir build && babel index.js --out-dir build",
+    "prepublish": "yarn run test && yarn run build",
+    "test": "mocha test.js --require mocha --compilers js:babel-core/register",
+    "standard": "standard --env mocha"
+  },
+  "dependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-plugin-transform-object-rest-spread": "^6.23.0",
+    "babel-preset-es2015": "^6.24.1",
+    "chai": "^3.5.0",
+    "mocha": "^3.4.1",
+    "rimraf": "^2.6.1",
+    "standard": "^10.0.2"
+  },
+  "files": [
+    "build"
+  ],
+  "babel": {
+    "presets": [
+      "es2015"
+    ],
+    "plugins": [
+      "transform-object-rest-spread"
+    ]
+  },
+  "standard": {
+    "ignore": [
+      "build"
+    ],
+    "globals": [
+      "expect"
+    ]
+  }
+}
