@@ -1,10 +1,28 @@
 import { expect } from 'chai'
+import chalk from 'chalk'
 
-import herokuLog, { format, log, parse } from './'
+import herokuLog, { format, log, parse, info, debug, error, warn, trace, fatal } from './index'
 
 describe('heroku-log', () => {
   beforeEach(() => {
     process.env.NODE_ENV = undefined
+  })
+
+  it('sub imports are working', () => {
+    // disable logging in this test
+    console.info = () => {}
+    console.error = () => {}
+    console.warn = () => {}
+    console.trace = () => {}
+
+    expect(() => {
+      info('das ist ne info')
+      debug('debug')
+      error('error')
+      warn('warn')
+      trace('trace')
+      fatal('fatal')
+    }).to.not.throw()
   })
 
   describe('format', () => {
@@ -65,13 +83,14 @@ describe('heroku-log', () => {
         expect(log(new Error('This is an error'))).to.deep.equal('error=This is an error')
       })
     })
+
     describe('non-production enviroment', () => {
       it('returns a string, starting with the timestamp', () => {
         const hh = new Date().getHours()
         const mm = new Date().getMinutes()
         const ss = new Date().getSeconds()
 
-        expect(log('some message')).to.equal(`[${hh}:${mm}:${ss}] message=some message`)
+        expect(log('some message')).to.equal(`${chalk.gray(`[${hh}:${mm}:${ss}]`)} message=some message`)
       })
     })
   })
