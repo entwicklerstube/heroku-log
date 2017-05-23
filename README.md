@@ -1,7 +1,6 @@
 # Heroku-log
 > Console.log wrapper for heroku-like logs
 
-[![Zero Dependencies](https://img.shields.io/badge/zero-dependencies-brightgreen.svg)]()
 [![Build Status](https://travis-ci.org/entwicklerstube/heroku-log.svg?branch=master)](https://travis-ci.org/entwicklerstube/heroku-log)
 ![npm total downloads](https://img.shields.io/npm/dt/heroku-log.svg)
 
