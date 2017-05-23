@@ -16,12 +16,12 @@ describe('heroku-log', () => {
     console.trace = () => {}
 
     expect(() => {
-      info('das ist ne info')
-      debug('debug')
-      error('error')
-      warn('warn')
-      trace('trace')
-      fatal('fatal')
+      info('This is a small information log')
+      debug('If this happens you should take a look...')
+      error('oh my gosh, there is a error')
+      warn('oh wait.. what is this?')
+      trace('trace the f out of it')
+      fatal('honestly? fatal doesnt sound like something i want to see.. :S')
     }).to.not.throw()
   })
 
