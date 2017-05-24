@@ -28,16 +28,14 @@ import {
 
 ### Example
 ```js
-import log, { error } from 'heroku-log'
+import herokuLog, { error } from 'heroku-log'
 
 // # On Heroku
-log.info('Server is starting')
-// level=info message=Server is starting level=info
+herokuLog.info('Server is starting')
+// 2017-05-24T08:58:42.857401+00:00 app[web.1] level=info message="Server is starting"
 
 error(new Error('I am an error '))
-// level=error error=I am an error
-
-// # On a non-production environment
+// 2017-05-24T08:58:42.857401+00:00 app[web.1] level=error error="I am an error"
 ```
 ![](https://mjz.io/IQwXU.png)
 
