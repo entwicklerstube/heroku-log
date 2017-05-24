@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 import chalk from 'chalk'
 
-import herokuLog, { format, log, parse, info, debug, error, warn, trace, fatal } from './index'
+import herokuLog, { format, log, parse, info, debug, error, warn, trace, fatal, mergeStringsAndArrays, addDoubleQuotesIfStringHasWhitespaces } from './index'
 
 describe('heroku-log', () => {
   beforeEach(() => {
@@ -9,14 +9,13 @@ describe('heroku-log', () => {
   })
 
   it('sub imports are working', () => {
-    // disable logging in this test
     console.info = () => {}
     console.error = () => {}
     console.warn = () => {}
     console.trace = () => {}
 
     expect(() => {
-      info('This is a small information log')
+      info('This', { some: 'important' })
       debug('If this happens you should take a look...')
       error('oh my gosh, there is a error')
       warn('oh wait.. what is this?')
@@ -51,6 +50,10 @@ describe('heroku-log', () => {
     it('returns the prop of a object with multiple props of the passed heroku-like format in an object', () => {
       expect(parse('hello=world foo=bar mambo=nr.5')).to.deep.equal({ hello: 'world', foo: 'bar', mambo: 'nr.5' })
     })
+
+    it('returns the prop with double-quotes of a object with multiple props of the passed heroku-like format in an object', () => {
+      expect(parse('foo="hello world"')).to.deep.equal({ foo: 'hello world' })
+    })
   })
 
   describe('log', () => {
@@ -64,23 +67,35 @@ describe('heroku-log', () => {
       })
 
       it('returns a single string as message', () => {
-        expect(log('hello world')).to.deep.equal('message=hello world')
+        expect(log('hello world')).to.equal('message="hello world"')
       })
 
       it('returns a array comma-seperated as message', () => {
-        expect(log([ 'mozart', 'beethoven' ])).to.deep.equal('message=mozart, beethoven')
+        expect(log([ 'mozart', 'beethoven' ])).to.equal('message="mozart, beethoven"')
       })
 
       it('returns a passed object splitted by props with the format function', () => {
-        expect(log({ hello: 'world' })).to.deep.equal('hello=world')
+        expect(log({ hello: 'world' })).to.equal('hello=world')
       })
 
       it('returns a deep object with a similary syntax but a : instead of =', () => {
-        expect(log({ hello: 'world', foo: { bar: 'baz' } })).to.deep.equal('hello=world foo=[bar:baz]')
+        expect(log({ hello: 'world', foo: { bar: 'baz' } })).to.equal('hello=world foo=[bar:baz]')
       })
 
       it('returns a Error in a error', () => {
-        expect(log(new Error('This is an error'))).to.deep.equal('error=This is an error')
+        expect(log(new Error('This is an error'))).to.equal('error=This is an error')
+      })
+
+      it('returns a combination of string and object', () => {
+        expect(log('foo', { hello: 'world' })).to.equal('message=foo hello=world')
+      })
+
+      it('returns a combination of string and multie object', () => {
+        expect(log('foo', { hello: 'world', foo: { hello: 'world' } })).to.equal('message=foo hello=world foo=[hello:world]')
+      })
+
+      it('returns a combination of string and array', () => {
+        expect(log('foo', ['bar'], { hey: 'you!' })).to.equal('message="foo, bar" hey=you!')
       })
     })
 
@@ -90,8 +105,48 @@ describe('heroku-log', () => {
         const mm = new Date().getMinutes()
         const ss = new Date().getSeconds()
 
-        expect(log('some message')).to.equal(`${chalk.gray(`[${hh}:${mm}:${ss}]`)} message=some message`)
+        expect(log('some message')).to.equal(`${chalk.gray(`[${hh}:${mm}:${ss}]`)} message="some message"`)
       })
+    })
+  })
+
+  describe('mergeStringsAndArrays', () => {
+    it('returns an array', () => {
+      expect(mergeStringsAndArrays()).to.be.a('array')
+    })
+
+    it('returns a passed array and return it in the response', () => {
+      expect(mergeStringsAndArrays(['foo'])).to.deep.equal([['foo']])
+    })
+
+    it('returns a passed string and return it in the response as array', () => {
+      expect(mergeStringsAndArrays('hello world')).to.deep.equal([['hello world']])
+    })
+
+    it('returns multple passed strings and return them in the response as array', () => {
+      expect(mergeStringsAndArrays('hello world', 'foobar')).to.deep.equal([['hello world', 'foobar']])
+    })
+
+    it('returns a mix of passed props and return them in the response as array', () => {
+      expect(mergeStringsAndArrays('foo', 'baz', ['hello world', 'foobar'])).to.deep.equal([['foo', 'baz', 'hello world', 'foobar']])
+    })
+
+    it('returns a mix of passed props and return them in the response as array', () => {
+      expect(mergeStringsAndArrays([ 'foo', [ 'bar' ], { hey: 'you!' } ])).to.deep.equal([['foo', 'bar'], { hey: 'you!' }])
+    })
+  })
+
+  describe('addDoubleQuotesIfStringHasWhitespaces', () => {
+    it('returns a string', () => {
+      expect(addDoubleQuotesIfStringHasWhitespaces()).to.be.a('string')
+    })
+
+    it('returns a single word without double-quotes', () => {
+      expect(addDoubleQuotesIfStringHasWhitespaces('hello')).to.equal('hello')
+    })
+
+    it('returns multple passed words with double-quotes', () => {
+      expect(addDoubleQuotesIfStringHasWhitespaces('hello world')).to.equal('"hello world"')
     })
   })
 })
