@@ -14,15 +14,17 @@ const isProduction = () => {
   return (process.env.NODE_ENV || '').toLowerCase() === 'production'
 }
 
+const colorIfNonProduction = (color, code) => isProduction() ? code : chalk[color](code)
+
 export const format = (object = {}, splitter = '=') => {
   return Object
     .keys(object)
-    .map(key => `${key}${splitter}${typeof object[key] === 'object' ? `[${format(object[key], ':')}]` : addDoubleQuotesIfStringHasWhitespaces(object[key])}`)
+    .map(key => colorIfNonProduction('grey', `${key}${splitter}${typeof object[key] === 'object' ? `[${format(object[key], ':')}]` : addDoubleQuotesIfStringHasWhitespaces(object[key])}`))
     .join(' ')
 }
 
 export const parse = (log = '') => log
-    .replace(/".+(\s)[a-z]+"/, ($1, $2) => $1.replace(/\s/g,'__HEROKU_LOG_WHITESPACE_SPLITTER__'))
+    .replace(/".+(\s)[a-z]+"/, $1 => $1.replace(/\s/g,'__HEROKU_LOG_WHITESPACE_SPLITTER__'))
     .replace(/"/g, '')
     .split(' ')
     .map(prop => {
@@ -34,12 +36,12 @@ const logPrefix = args => {
   const hh = new Date().getHours()
   const mm = new Date().getMinutes()
   const ss = new Date().getSeconds()
-  const time = chalk.gray(`[${hh}:${mm}:${ss}]`)
+  const time = colorIfNonProduction('grey', `[${hh}:${mm}:${ss}]`)
 
   const prop = args.find(a => a.level) || {}
   const level = (prop.level || '').toUpperCase()
 
-  const lvl = `${Object.keys(chalkLevelColor).includes(level) ? chalk[chalkLevelColor[level]](`${pad(level + ' ', 10, '·')} `) : '' }`
+  const lvl = `${Object.keys(chalkLevelColor).includes(level) ? colorIfNonProduction(chalkLevelColor[level], `${pad(level + ' ', 10, '·')} `) : '' }`
 
   return [time, lvl].join(' ')
 }
@@ -87,7 +89,7 @@ export const log = (...args) => {
   .join(' ')}
 
 const stdout = (type = 'log', str = '') => {
-  const logMessage = isProduction() ? str : str.replace(/message="([^"]+)"/, ($1, $2) => $2)
+  const logMessage = isProduction() ? str : str.replace(/message="?([^"]+)"?/, ($1, $2) => $2)
   console[type](logMessage)
 }
 

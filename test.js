@@ -15,7 +15,7 @@ describe('heroku-log', () => {
     console.trace = () => {}
 
     expect(() => {
-      info('This', { some: 'important' })
+      info('This is', { some: 'important', message: 'yep' }, { foo: 'bar' })
       debug('If this happens you should take a look...')
       error('oh my gosh, there is a error')
       warn('oh wait.. what is this?')
@@ -30,11 +30,11 @@ describe('heroku-log', () => {
     })
 
     it('returns a string with heroku like format of passed object', () => {
-      expect(format({ hello: 'world' })).to.equal('hello=world')
+      expect(format({ hello: 'world' })).to.equal(chalk.grey('hello=world'))
     })
 
     it('returns a multiple props in a object in heroku like format', () => {
-      expect(format({ hello: 'world', foo: 'bar' })).to.equal('hello=world foo=bar')
+      expect(format({ hello: 'world', foo: 'bar' })).to.equal(`${chalk.grey('hello=world')} ${chalk.grey('foo=bar')}`)
     })
   })
 
