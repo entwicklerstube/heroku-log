@@ -90,7 +90,8 @@ export const log = (...args) => {
 
 const stdout = (type = 'log', str = '') => {
   const logMessage = isProduction() ? str : str.replace(/message="?([^"]+)"?/, ($1, $2) => $2)
-  console[type](logMessage)
+
+  process.env.HEROKU_LOG !== 'disable' && console[type](logMessage);
 }
 
 export const info = (...args) => stdout('info', log(...args, { level: 'info' }))
