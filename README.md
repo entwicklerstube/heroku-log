@@ -39,5 +39,11 @@ error(new Error('I am an error '))
 ```
 ![](https://mjz.io/IQwXU.png)
 
+### Tricks
+Sometimes you don't want those logs e.g. when testing things, in this case you can pass a env variable in the command line and the module is muted
+```
+$ HEROKU_LOG=disable mocha test.js
+```
+
 ### Timestamps
 If the environment is not production `heroku-log` will add a simple time-mark at the beginning of each log, in production it will be hidden since Heroku adds a time block by itself.
