@@ -1,5 +1,5 @@
 # Heroku-log
-> Console.log wrapper for heroku-like logs
+> console.log wrapper for heroku-like logs
 
 [![Build Status](https://travis-ci.org/entwicklerstube/heroku-log.svg?branch=master)](https://travis-ci.org/entwicklerstube/heroku-log)
 
